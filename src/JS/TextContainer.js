@@ -30,7 +30,10 @@ const styles : StyleSheet = {
         height: "70vh",
         width: "45vh",
         margin: 50,
-        textAlignVertical: "top"
+        textAlignVertical: "top",
+        borderStyle: 'solid',
+        borderWidth: 5,
+        marginTop:10
 
     }
 }
