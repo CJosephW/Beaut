@@ -28,6 +28,6 @@ const styles : StyleSheet = {
     display: 'flex',
     flexDirection: 'row',
     alignContent: 'center',
-    textAlign: 'center'
+    
   }
 }

@@ -13,7 +13,7 @@ function TextContainer(props){
     return <div style = {styles.div}>
         <label>{props.title}</label>
         <br></br>
-        <input style = {styles.input} type = "text" value = {text} onChange = {() => setText()}></input>
+        <textarea style = {styles.input} type = "text" value = {text} onChange = {() => setText()}/>
         </div>;
 
 } export default TextContainer;
@@ -29,6 +29,8 @@ const styles : StyleSheet = {
     input:{
         height: "70vh",
         width: "45vh",
-        margin:  50,
+        margin: 50,
+        textAlignVertical: "top"
+
     }
 }
