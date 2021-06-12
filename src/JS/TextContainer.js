@@ -1,19 +1,11 @@
-import { findByLabelText } from "@testing-library/react";
-import { useState } from "react";
 import React from "react"
-
-
-
-
 
 function TextContainer(props){
 
-    const [text, setText] = useState("")
-    
     return <div style = {styles.div}>
         <label>{props.title}</label>
         <br></br>
-        <textarea style = {styles.input} type = "text" value = {text} onChange = {() => setText()}/>
+        <textarea style = {styles.input} type = "text" value = {props.text} onChange = {props.onChange}/>
         </div>;
 
 } export default TextContainer;

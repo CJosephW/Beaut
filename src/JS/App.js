@@ -1,7 +1,21 @@
 import '../style/App.css';
 import TextContainer  from './TextContainer';
+import {useState} from 'react';
+
+
+
+function beautify(text){
+  let ugly_contents = text.uglyText;
+  let ugly_json = JSON.parse(ugly_contents);
+  let pretty_text = JSON.stringify(ugly_json, null, "\t");
+  return pretty_text;
+}
 
 function App() {
+
+    var [uglyText, setUglyText] = useState("");
+    var [prettyText, setPrettyText] = useState("");
+  
   return (
     <div className="App">
         <h1><b>Beaut</b></h1>
@@ -9,10 +23,13 @@ function App() {
         <div>
           <form>
             <div className = "JSON_containers" style = {styles.ContainerRows}>
-              <TextContainer title = "Ugly JSON" default_text = "paste ugly JSON here"/>
-              <TextContainer title = "Beautiful JSON" default_text = "Output..."/>
+              <TextContainer title = "Ugly JSON" text = {uglyText} onChange = {(event) => setUglyText(event.target.value)}/>
+              <TextContainer title = "Beautiful JSON" text = {prettyText}/>
             </div>
-            <input type = "submit" value = "Beautify!"></input>
+            <button style = {styles.button} onClick = {(event) => {
+              setPrettyText(beautify({uglyText}));
+              event.preventDefault();
+            }}><p>Beautify</p></button>
           </form>
           
         </div>
@@ -29,5 +46,9 @@ const styles : StyleSheet = {
     flexDirection: 'row',
     alignContent: 'center',
     
+  },
+  button:{
+    height:50,
+    width: 200
   }
 }
