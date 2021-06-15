@@ -1,7 +1,8 @@
-import TextContainer  from './TextContainer';
+import JsonContainer  from './JsonContainer';
 import {useState} from 'react';
 import { useContainerStore } from '../stores/ContainerContext';
 import { useObserver } from 'mobx-react';
+import JWTContainer from './JWTContainer';
 
 function Tabs() {
     /**containerStore.containers.find((container) => container.type === "JWT" != undefined) */
@@ -15,7 +16,7 @@ function Tabs() {
     return useObserver ( () => (
       <div>
         { isJWT ?
-            <TextContainer onClick= {(event) => {event.preventDefault(); setIsJWT(false)} } title = "UglyJWT" button_label = "JWT" value = {jwtText} 
+            <JWTContainer onClick= {(event) => {event.preventDefault(); setIsJWT(false)} } title = "UglyJWT" button_label = "JWT" value = {jwtText} id = {jsonID}
             
                 onChange ={(e) => {
                     if(JWTID != null){
@@ -35,7 +36,7 @@ function Tabs() {
 
         {
             !isJWT ? 
-            <TextContainer onClick= {() => setIsJWT(true)} title = "UglyJson" button_label = "JSON" value = {jsonText} 
+            <JsonContainer onClick= {() => setIsJWT(true)} title = "UglyJson" button_label = "JSON" value = {jsonText} 
             
             onChange ={(e) => {
                 if(jsonID != null){
