@@ -23,7 +23,7 @@ function JWTContainer(props){
                 </div>
                 {/** set lines to break and overwrite component's styling for sizing and add border color based on if the error condition is met */}
                 <SyntaxHighlighter customStyle = {errorBool ? styles.error_input : styles.input} 
-                lineProps={{style: { wordBreak: 'break-all', whiteSpace: 'pre-wrap'}}}wrapLines={true} language = "json" >{prettyText} </SyntaxHighlighter> 
+                lineProps={{style: { wordBreak: 'break-all', whiteSpace: 'pre-wrap'}}}wrapLines={true} language="json">{prettyText} </SyntaxHighlighter> 
                 </div>
                 <button style = {styles.button} onClick = {(event) => {
                 setPrettyText(beautify(props.value));
@@ -36,11 +36,19 @@ function JWTContainer(props){
         let pretty_text = ""
     
         try{
-            console.log("hello")
-            console.log(text + "end")
-            let ugly_contents = text;
+
+            let base64_jwt = text.split('.',3)
+            let header = atob(base64_jwt[0])
+            let payload = atob(base64_jwt[1])
+            let signature = base64_jwt[2]
+            console.log(header)
+
+            /*let ugly_contents = text;
             let ugly_json = JSON.parse(ugly_contents);
-            pretty_text = JSON.stringify(ugly_json, null, "\t");
+            pretty_text = JSON.stringify(ugly_json, null, "\t");*/
+
+            pretty_text = ("\n\"header\":"+ header + ",\n\"payload\":"+ payload + ",\n\"signature:\" \""+ signature+ "\"")
+
             setErrorBool(false)
         
         }
