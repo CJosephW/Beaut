@@ -4,26 +4,27 @@ import { Prism as SyntaxHighlighter} from 'react-syntax-highlighter';
 import { useContainerStore } from "../stores/ContainerContext";
 import { useObserver } from 'mobx-react';
 import JsonContainer from "./JsonContainer";
-
+import CryptoJS from "crypto-js";
 
 
 function JWTContainer(props){
     var [prettyText, setPrettyText] = useState("");
     var [errorBool, setErrorBool] = useState(false)
+    var [secret, setSignatureSecret] = useState("");
 
     return(
         <div style = {styles.div}>
             <div>
                 <div className = "JSON_containers" style = {styles.ContainerRows}>
                 {/*<JsonContainer title = "Ugly JSON" text = {uglyText} onChange = {(event) => setUglyText(event.target.value)}/>*/}
-                <div style = {styles.ugly_style}>
-                    <label onClick = {props.onClick}>{props.title}</label>
-                    <br></br>
-                    <textarea style = {styles.input1} type = "text" value = {props.value} onChange = {props.onChange}/> 
-                </div>
-                {/** set lines to break and overwrite component's styling for sizing and add border color based on if the error condition is met */}
-                <SyntaxHighlighter customStyle = {errorBool ? styles.error_input : styles.input} 
-                lineProps={{style: { wordBreak: 'break-all', whiteSpace: 'pre-wrap'}}}wrapLines={true} language="json">{prettyText} </SyntaxHighlighter> 
+                    <div style = {styles.div23}>
+                        <label onClick = {props.onClick}>{props.title}</label>
+                        <textarea style = {styles.input1} type = "text" value = {props.value} onChange = {props.onChange}/> 
+                        <textarea style = {styles.signature_key} value = {secret} onChange = {(event) => setSignatureSecret(event.target.value)}></textarea>
+                    </div>
+                    {/** set lines to break and overwrite component's styling for sizing and add border color based on if the error condition is met */}
+                    <SyntaxHighlighter customStyle = {errorBool ? styles.error_input : styles.input} 
+                    lineProps={{style: { wordBreak: 'break-all', whiteSpace: 'pre-wrap'}}}wrapLines={true} language="json">{prettyText} </SyntaxHighlighter> 
                 </div>
                 <button style = {styles.button} onClick = {(event) => {
                 setPrettyText(beautify(props.value));
@@ -41,11 +42,14 @@ function JWTContainer(props){
             let header = atob(base64_jwt[0])
             let payload = atob(base64_jwt[1])
             let signature = base64_jwt[2]
-            console.log(header)
-
-            /*let ugly_contents = text;
-            let ugly_json = JSON.parse(ugly_contents);
-            pretty_text = JSON.stringify(ugly_json, null, "\t");*/
+            if(secret !== ""){
+                let signature_hmac = CryptoJS.HmacSHA256(base64_jwt[0] +"." + base64_jwt[1], secret).toString(CryptoJS.enc.Base64)
+                signature_hmac = base64urlEscape(signature_hmac)
+                if(signature === signature_hmac){
+                    //todo at style change on match, as well as warnings for entering keys
+                }
+                
+            }
 
             pretty_text = ("\n\"header\":"+ header + ",\n\"payload\":"+ payload + ",\n\"signature:\" \""+ signature+ "\"")
 
@@ -53,8 +57,7 @@ function JWTContainer(props){
         
         }
         catch(JSONerror){
-            console.log('hello')
-            pretty_text = "invali " + JSONerror.message
+            pretty_text = "invalid " + JSONerror.message
             setErrorBool(true)
             return
         
@@ -64,6 +67,11 @@ function JWTContainer(props){
             return pretty_text
         }
     }
+    function base64urlEscape(str) {
+        // React throws a fit unless this is explicitly put in a RegExp constructor
+        const plusReg = new RegExp('/+/', 'g');
+        return str.replace("+", '-').replace(/\//g, '_').replace(/=/g, '');
+      };
 
 }export default JWTContainer
 
@@ -71,11 +79,11 @@ function JWTContainer(props){
 
 
 const styles : StyleSheet = {
-div: {
+div23: {
 display: 'flex',
 justifyContent: 'center',
 flexDirection: 'column',
-textAlign: "canter"
+textAlign: "center"
 
 },
 input1:{
@@ -112,4 +120,8 @@ textColor: '',
 height: "70vh",
 width: "45vh",
 },
+signature_key:{
+    resize: 'none',
+    
+}
 }

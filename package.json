@@ -6,6 +6,8 @@
     "@testing-library/jest-dom": "^5.13.0",
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
+    "aes-js": "^3.1.2",
+    "crypto-js": "^4.0.0",
     "highlight.js": "^11.0.1",
     "mobx": "^6.3.2",
     "mobx-react": "^7.2.0",

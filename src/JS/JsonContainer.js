@@ -9,6 +9,7 @@ import { useObserver } from 'mobx-react';
 function JsonContainer(props){
     var [prettyText, setPrettyText] = useState("");
     var [errorBool, setErrorBool] = useState(false)
+    
 
     return(
         <div style = {styles.div}>
