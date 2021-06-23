@@ -1,0 +1,5 @@
+light blue: #66FCF1
+darker teal: #45A29E
+GREY : #C5C6C7
+DARKER GREY : #1F2833
+BLACK: #0B0C10

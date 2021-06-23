@@ -2,7 +2,8 @@ import {nanoid} from 'nanoid';
 
 export function createContainerStore(){
     return {
-        containers: [],
+        containers: [
+        ],
         addContainer(text, type,id){
             this.containers.push({
                 text:text,

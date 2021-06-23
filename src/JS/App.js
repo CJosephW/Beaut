@@ -1,4 +1,4 @@
-import '../style/App.css';
+import '../style/App.scss';
 import {useState} from 'react';
 import Tabs from './Tabs.js'
 

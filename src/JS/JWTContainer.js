@@ -17,7 +17,7 @@ function JWTContainer(props){
             <div>
                 <div className = "JSON_containers" style = {styles.ContainerRows}>
                 {/*<JsonContainer title = "Ugly JSON" text = {uglyText} onChange = {(event) => setUglyText(event.target.value)}/>*/}
-                    <div style = {styles.div23}>
+                    <div style = {styles.dirtyText}>
                         <label onClick = {props.onClick}>{props.title}</label>
                         <textarea style = {styles.input1} type = "text" value = {props.value} onChange = {props.onChange}/> 
                         <textarea style = {styles.signature_key} value = {secret} onChange = {(event) => setSignatureSecret(event.target.value)}></textarea>
@@ -56,8 +56,8 @@ function JWTContainer(props){
             setErrorBool(false)
         
         }
-        catch(JSONerror){
-            pretty_text = "invalid " + JSONerror.message
+        catch(JWTError){
+            pretty_text = "invalid " + JWTError.message
             setErrorBool(true)
             return
         
@@ -69,7 +69,7 @@ function JWTContainer(props){
     }
     function base64urlEscape(str) {
         // React throws a fit unless this is explicitly put in a RegExp constructor
-        const plusReg = new RegExp('/+/', 'g');
+        //const plusReg = new RegExp('/+/', 'g');
         return str.replace("+", '-').replace(/\//g, '_').replace(/=/g, '');
       };
 
@@ -79,7 +79,7 @@ function JWTContainer(props){
 
 
 const styles : StyleSheet = {
-div23: {
+dirtyText: {
 display: 'flex',
 justifyContent: 'center',
 flexDirection: 'column',
