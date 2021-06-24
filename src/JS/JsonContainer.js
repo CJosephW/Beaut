@@ -5,7 +5,7 @@ import { Prism as SyntaxHighlighter} from 'react-syntax-highlighter';
 import { dark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { useContainerStore } from "../stores/ContainerContext";
 import { useObserver } from 'mobx-react';
-import "../style/Json.scss"
+import "../style/Input.scss"
 
 
 
@@ -19,19 +19,19 @@ function JsonContainer(props){
             <div class = "row" >
                 {/*<JsonContainer title = "Ugly JSON" text = {uglyText} onChange = {(event) => setUglyText(event.target.value)}/>*/}
                 <div class = "col-xl-5">
-                    <label class = 'label' onClick = {props.onClick}>{props.title}</label>
+                    <label class = 'inputHeader' onClick = {props.onClick}>{props.title}</label>
                     <br></br>
-                    <textarea class = "textArea" spellCheck = "false" type = "text" value = {props.value} onChange = {props.onChange}/> 
+                    <textarea class = "uglyInput" spellCheck = "false" type = "text" value = {props.value} onChange = {props.onChange}/> 
                 </div>
                 <div class = "col-xl-2 align-self-end">
-                    <button class = "button"  onClick = {(event) => {
+                    <button class = "submitButton"  onClick = {(event) => {
                         setPrettyText(beautify(props.value));
                         event.preventDefault();
-                        }}><p class = "buttonText">{props.button_label}</p></button>
+                        }}><p class = "submitButtonText">{props.button_label}</p></button>
                 </div>
                 <div class = "col-xl-5">
                     {/** set lines to break and overwrite component's styling for sizing and add border color based on if the error condition is met */}
-                    <label class = "label">Pretty JSON</label>
+                    <label class = "inputHeader">Pretty JSON</label>
                     <SyntaxHighlighter customStyle = {styles.syntax_highlighter_style}
                     lineProps={{style: { wordBreak: 'break-all', whiteSpace: 'pre-wrap'}}}wrapLines={true} language = "json"  style = {dark}>{prettyText} </SyntaxHighlighter> 
                 </div>
