@@ -5,6 +5,9 @@ import { useContainerStore } from "../stores/ContainerContext";
 import { useObserver } from 'mobx-react';
 import JsonContainer from "./JsonContainer";
 import CryptoJS from "crypto-js";
+import "../style/JWT.scss"
+import { dark } from 'react-syntax-highlighter/dist/esm/styles/prism';
+
 
 
 function JWTContainer(props){
@@ -13,24 +16,32 @@ function JWTContainer(props){
     var [secret, setSignatureSecret] = useState("");
 
     return(
-        <div style = {styles.div}>
-            <div>
-                <div className = "JSON_containers" style = {styles.ContainerRows}>
+        <div class = "container w-75">
+            <div class = "row" >
+
                 {/*<JsonContainer title = "Ugly JSON" text = {uglyText} onChange = {(event) => setUglyText(event.target.value)}/>*/}
-                    <div style = {styles.dirtyText}>
-                        <label onClick = {props.onClick}>{props.title}</label>
-                        <textarea style = {styles.input1} type = "text" value = {props.value} onChange = {props.onChange}/> 
-                        <textarea style = {styles.signature_key} value = {secret} onChange = {(event) => setSignatureSecret(event.target.value)}></textarea>
-                    </div>
-                    {/** set lines to break and overwrite component's styling for sizing and add border color based on if the error condition is met */}
-                    <SyntaxHighlighter customStyle = {errorBool ? styles.error_input : styles.input} 
-                    lineProps={{style: { wordBreak: 'break-all', whiteSpace: 'pre-wrap'}}}wrapLines={true} language="json">{prettyText} </SyntaxHighlighter> 
+                <div class = "col-xl-5">
+                    <label class = 'label' onClick = {props.onClick}>{props.title}</label>
+                    <br></br>
+                    <textarea class = "textArea" spellCheck = "false" type = "text" value = {props.value} onChange = {props.onChange}/> 
+                    <textarea class = "sigTextArea" value = {secret} onChange = {(event) => setSignatureSecret(event.target.value)}></textarea>
+                </div >
+
+                <div class = "col-xl-2 align-self-end">
+                    <button class = "button"  onClick = {(event) => {
+                        setPrettyText(beautify(props.value));
+                        event.preventDefault();
+                        }}><p class = "buttonText">{props.button_label}</p></button>
                 </div>
-                <button style = {styles.button} onClick = {(event) => {
-                setPrettyText(beautify(props.value));
-                event.preventDefault();
-                }}><p>{props.button_label}</p></button>
-            </div>
+
+                <div class = "col-xl-5">
+                    {/** set lines to break and overwrite component's styling for sizing and add border color based on if the error condition is met */}
+                    <label class = "label">Pretty JWT</label>
+                    <SyntaxHighlighter customStyle = {styles.syntax_highlighter_style}
+                    lineProps={{style: { wordBreak: 'break-all', whiteSpace: 'pre-wrap'}}}wrapLines={true} language = "json"  style = {dark}>{prettyText} </SyntaxHighlighter> 
+                </div>
+
+            </div>  
         </div>
     );
     function beautify(text){
@@ -75,53 +86,15 @@ function JWTContainer(props){
 
 }export default JWTContainer
 
-
-
-
 const styles : StyleSheet = {
-dirtyText: {
-display: 'flex',
-justifyContent: 'center',
-flexDirection: 'column',
-textAlign: "center"
-
-},
-input1:{
-height: "70vh",
-width: "45vh",
-margin: 50,
-textAlignVertical: "top",
-borderStyle: 'solid',
-borderWidth: 5,
-marginTop:10
-
-},
-ContainerRows: {
-justifyContent: 'center',
-display: 'flex',
-flexDirection: 'row',
-alignContent: 'center',
-
-},
-button:{
-height:50,
-width: 200
-},
-input:{
-height: "70vh",
-width: "45vh",
-border: 'solid',
-
-},
-error_input:{
-border: 'solid',
-borderColor: '#ff0000',
-textColor: '',
-height: "70vh",
-width: "45vh",
-},
-signature_key:{
-    resize: 'none',
-    
-}
+    syntax_highlighter_style:{
+        backgroundColor: "#202020",
+        height: "100%",
+        margin: 0,
+        border:0,
+        borderRadius: 10,
+        boxShadow: 'none',
+        overflowY:'scroll',
+        maxHeight:800
+    }
 }

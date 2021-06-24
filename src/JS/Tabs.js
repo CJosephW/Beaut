@@ -17,7 +17,7 @@ function Tabs() {
     return useObserver ( () => (
       <div class = "fill">
         { isJWT ?
-            <JWTContainer onClick= {(event) => {event.preventDefault(); setIsJWT(false)} } title = "UglyJWT" button_label = "JWT" value = {jwtText} id = {jsonID}
+            <JWTContainer onClick= {(event) => {event.preventDefault(); setIsJWT(false)} } title = "Ugly JWT" button_label = "JWT" value = {jwtText} id = {jsonID}
             
                 onChange ={(e) => {
                     if(JWTID !== null){
@@ -37,7 +37,7 @@ function Tabs() {
 
         {
             !isJWT ? 
-            <JsonContainer onClick= {() => setIsJWT(true)} title = "UglyJson" button_label = "JSON" value = {jsonText} 
+            <JsonContainer onClick= {() => setIsJWT(true)} title = "Ugly JSON" button_label = "JSON" value = {jsonText} 
             
             onChange ={(e) => {
                 if(jsonID !== null){
