@@ -3,7 +3,6 @@ import {useState} from 'react';
 import { Prism as SyntaxHighlighter} from 'react-syntax-highlighter';
 import { useAppStore } from "../stores/AppContext";
 import { useObserver } from 'mobx-react';
-import JsonContainer from "./JsonContainer";
 import CryptoJS from "crypto-js";
 import "../style/Input.scss"
 import { dark } from 'react-syntax-highlighter/dist/esm/styles/prism';
@@ -12,8 +11,6 @@ import { dark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 function JWTContainer(props){
     var [prettyText, setPrettyText] = useState("");
-    var [errorBool, setErrorBool] = useState(false)
-    var [secret, setSignatureSecret] = useState("");
     var [isChecked, setIsChecked] = useState(false)
     var [isValidSecret, setIsValidSecret] = useState(false)
 
@@ -24,25 +21,41 @@ function JWTContainer(props){
             <div class = "row" >
 
                 {/*<JsonContainer title = "Ugly JSON" text = {uglyText} onChange = {(event) => setUglyText(event.target.value)}/>*/}
-                <div class = "col-xl-5">
+                <div class = "col-xl-6">
                     <label class = 'inputHeader' onClick = {props.onClick}>{props.title}</label>
                     <br></br>
-                    <textarea class = "uglyInput" spellCheck = "false" type = "text" value = {props.value} onChange = {props.onChange}/> 
+                    <textarea class = "uglyInput" spellCheck = "false" type = "text" value = {stores.jwt.JWT} 
+                        onChange ={(e) => {
+                            setIsValidSecret(false)
+                            e.preventDefault();
+                            stores.jwt.JWT = e.target.value
+                            stores.jwt.prettyJWT= beautify(stores.jwt.JWT)
+                        }}/> 
                     <label class = "checkboxText">
                         {"Verify Signature:\t" }
                         <input
                             name = "verify signature"
                             type = "checkbox"
                             onChange = {() => {
-                                setIsChecked(!isChecked)
-                                setIsValidSecret(false)
+                                if(isChecked === false){
+                                    setIsChecked(true)
+                                    console.log(isChecked)
+                                    stores.jwt.prettyJWT = beautify(stores.jwt.JWT);
+                                }
+
+                                if(isChecked === true){
+                                    setIsChecked(false)
+                                    setIsValidSecret(false)
+                                    console.log('not valid')
+                                }
+                                
                                 }}
                             checked = {isChecked}
                         ></input>
                     </label>
 
                     <textarea class = "sigInput" value = {stores.jwt.secret} onChange = {(event) => 
-                        {stores.jwt.secret = event.target.value; setSignatureSecret(stores.jwt.secret); setIsValidSecret(false)}}/>
+                        {stores.jwt.secret = event.target.value; setIsValidSecret(false); stores.jwt.prettyJWT = beautify(stores.jwt.JWT);}}/>
                     {
                         isChecked ? 
 
@@ -51,18 +64,11 @@ function JWTContainer(props){
                     }
                 </div >
 
-                <div class = "col-xl-2 align-self-end">
-                    <button class = "submitButton"  onClick = {(event) => {
-                        setPrettyText(beautify(props.value));
-                        event.preventDefault();
-                        }}><p class = "submitButtonText">{props.button_label}</p></button>
-                </div>
-
-                <div class = "col-xl-5">
+                <div class = "col-xl-6">
                     {/** set lines to break and overwrite component's styling for sizing and add border color based on if the error condition is met */}
                     <label class = "inputHeader">Pretty JWT</label>
                     <SyntaxHighlighter customStyle = {styles.syntax_highlighter_style}
-                    lineProps={{style: { wordBreak: 'break-all', whiteSpace: 'pre-wrap'}}}wrapLines={true} language = "json"  style = {dark}>{prettyText} </SyntaxHighlighter>
+                    lineProps={{style: { wordBreak: 'break-all', whiteSpace: 'pre-wrap'}}}wrapLines={true} language = "json"  style = {dark}>{stores.jwt.prettyJWT} </SyntaxHighlighter>
                     {
                         isValidSecret ? 
                         <p class = "validSecretText">Your Token is Valid</p>
@@ -83,37 +89,33 @@ function JWTContainer(props){
             let header = atob(base64_jwt[0])
             let payload = atob(base64_jwt[1])
             let signature = base64_jwt[2]
-            console.log(secret)
             if(stores.jwt.secret !== ""  && isChecked === true){
                 let signature_hmac = CryptoJS.HmacSHA256(base64_jwt[0] +"." + base64_jwt[1], stores.jwt.secret).toString(CryptoJS.enc.Base64)
                 signature_hmac = base64urlEscape(signature_hmac)
                 if(signature === signature_hmac){
-                    //todo at style change on match, as well as warnings for entering keys
                     setIsValidSecret(true)
-                    console.log('they match')
+                    console.log(isChecked)
                 }
                 else{
                     console.log("they don't match")
+                    setIsValidSecret(false)
+
                 }
                 
             }
 
             pretty_text = ("{\n\"header\":"+ header + ",\n\"payload\":"+ payload + ",\n\"signature\": \""+signature+ "\"\n}")
-            console.log(pretty_text);
             pretty_text = JSON.parse(pretty_text)
             pretty_text = JSON.stringify(pretty_text, null, '\t')
             
-            setErrorBool(false)
-        
         }
         catch(JWTError){
             pretty_text = "invalid " + JWTError.message
-            setErrorBool(true)
             return
         
         }
         finally{
-        
+            
             return pretty_text
         }
     }
