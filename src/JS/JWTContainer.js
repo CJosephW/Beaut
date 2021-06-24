@@ -1,7 +1,7 @@
 import React from "react"
 import {useState} from 'react';
 import { Prism as SyntaxHighlighter} from 'react-syntax-highlighter';
-import { useContainerStore } from "../stores/ContainerContext";
+import { useAppStore } from "../stores/AppContext";
 import { useObserver } from 'mobx-react';
 import JsonContainer from "./JsonContainer";
 import CryptoJS from "crypto-js";
@@ -14,8 +14,12 @@ function JWTContainer(props){
     var [prettyText, setPrettyText] = useState("");
     var [errorBool, setErrorBool] = useState(false)
     var [secret, setSignatureSecret] = useState("");
+    var [isChecked, setIsChecked] = useState(false)
+    var [isValidSecret, setIsValidSecret] = useState(false)
 
-    return(
+    const stores = useAppStore()
+
+    return useObserver ( () => (
         <div class = "container w-75">
             <div class = "row" >
 
@@ -24,7 +28,27 @@ function JWTContainer(props){
                     <label class = 'inputHeader' onClick = {props.onClick}>{props.title}</label>
                     <br></br>
                     <textarea class = "uglyInput" spellCheck = "false" type = "text" value = {props.value} onChange = {props.onChange}/> 
-                    <textarea class = "sigInput" value = {secret} onChange = {(event) => setSignatureSecret(event.target.value)}></textarea>
+                    <label class = "checkboxText">
+                        {"Verify Signature:\t" }
+                        <input
+                            name = "verify signature"
+                            type = "checkbox"
+                            onChange = {() => {
+                                setIsChecked(!isChecked)
+                                setIsValidSecret(false)
+                                }}
+                            checked = {isChecked}
+                        ></input>
+                    </label>
+
+                    <textarea class = "sigInput" value = {stores.jwt.secret} onChange = {(event) => 
+                        {stores.jwt.secret = event.target.value; setSignatureSecret(stores.jwt.secret); setIsValidSecret(false)}}/>
+                    {
+                        isChecked ? 
+
+                        <p class = "signatureWarning">Warning: Do not disclose secrets to untrusted sources, third party sources may be able to generate valid tokens for your applications</p>
+                        : null
+                    }
                 </div >
 
                 <div class = "col-xl-2 align-self-end">
@@ -38,12 +62,18 @@ function JWTContainer(props){
                     {/** set lines to break and overwrite component's styling for sizing and add border color based on if the error condition is met */}
                     <label class = "inputHeader">Pretty JWT</label>
                     <SyntaxHighlighter customStyle = {styles.syntax_highlighter_style}
-                    lineProps={{style: { wordBreak: 'break-all', whiteSpace: 'pre-wrap'}}}wrapLines={true} language = "json"  style = {dark}>{prettyText} </SyntaxHighlighter> 
+                    lineProps={{style: { wordBreak: 'break-all', whiteSpace: 'pre-wrap'}}}wrapLines={true} language = "json"  style = {dark}>{prettyText} </SyntaxHighlighter>
+                    {
+                        isValidSecret ? 
+                        <p class = "validSecretText">Your Token is Valid</p>
+                        : null
+
+                    } 
                 </div>
 
             </div>  
         </div>
-    );
+    ));
     function beautify(text){
         let pretty_text = ""
     
@@ -53,17 +83,26 @@ function JWTContainer(props){
             let header = atob(base64_jwt[0])
             let payload = atob(base64_jwt[1])
             let signature = base64_jwt[2]
-            if(secret !== ""){
-                let signature_hmac = CryptoJS.HmacSHA256(base64_jwt[0] +"." + base64_jwt[1], secret).toString(CryptoJS.enc.Base64)
+            console.log(secret)
+            if(stores.jwt.secret !== ""  && isChecked === true){
+                let signature_hmac = CryptoJS.HmacSHA256(base64_jwt[0] +"." + base64_jwt[1], stores.jwt.secret).toString(CryptoJS.enc.Base64)
                 signature_hmac = base64urlEscape(signature_hmac)
                 if(signature === signature_hmac){
                     //todo at style change on match, as well as warnings for entering keys
+                    setIsValidSecret(true)
+                    console.log('they match')
+                }
+                else{
+                    console.log("they don't match")
                 }
                 
             }
 
-            pretty_text = ("\n\"header\":"+ header + ",\n\"payload\":"+ payload + ",\n\"signature:\" \""+ signature+ "\"")
-
+            pretty_text = ("{\n\"header\":"+ header + ",\n\"payload\":"+ payload + ",\n\"signature\": \""+signature+ "\"\n}")
+            console.log(pretty_text);
+            pretty_text = JSON.parse(pretty_text)
+            pretty_text = JSON.stringify(pretty_text, null, '\t')
+            
             setErrorBool(false)
         
         }

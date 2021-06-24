@@ -1,7 +1,7 @@
 $white : #fcfffe;
 $grey : #262626;
 $black : #202020;
-$green : #265a32;
+$green : rgb(189, 224, 82);
 
 .inputHeader{
     color:$white;
@@ -29,7 +29,7 @@ $green : #265a32;
     height: 100%;
     box-sizing: border-box;
     background-color: $black;
-    color:rgb(189, 224, 82);
+    color: $green;
     resize: none;
     min-height: 750px;
     max-height: 800px;
@@ -43,10 +43,19 @@ $green : #265a32;
     width: 100%;
     box-sizing: border-box;
     background-color: $black;
-    color:rgb(189, 224, 82);
+    color: $green;
     resize: none;
     max-height: 800px;
     border: 0;
     border-radius: 10;
     margin-top: 10px;
+}
+.checkboxText{
+    color:$white;
+}
+.signatureWarning{
+    color:red;
+}
+.validSecretText{
+    color:$green;
 }

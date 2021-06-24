@@ -3,8 +3,6 @@ import {useState} from 'react';
 
 import { Prism as SyntaxHighlighter} from 'react-syntax-highlighter';
 import { dark } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import { useContainerStore } from "../stores/ContainerContext";
-import { useObserver } from 'mobx-react';
 import "../style/Input.scss"
 
 
