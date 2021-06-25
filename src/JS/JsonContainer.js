@@ -1,6 +1,4 @@
 import React from "react"
-import {useState} from 'react';
-
 import { Prism as SyntaxHighlighter} from 'react-syntax-highlighter';
 import { dark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import "../style/Input.scss"
@@ -11,11 +9,9 @@ import { useObserver } from 'mobx-react';
 function JsonContainer(props){
     const stores = useAppStore()
 
-
     return useObserver ( () =>(
         <div class = "container w-75">
             <div class = "row" >
-                {/*<JsonContainer title = "Ugly JSON" text = {uglyText} onChange = {(event) => setUglyText(event.target.value)}/>*/}
                 <div class = "col-xl-6">
                     <label class = 'inputHeader' onClick = {props.onClick}>{props.title}</label>
                     <br></br>
@@ -35,9 +31,9 @@ function JsonContainer(props){
             </div>
         </div>
     ));
+    
     function beautify(text){
         let pretty_text = ""
-    
         try{
             let ugly_contents = text;
             let ugly_json = JSON.parse(ugly_contents);

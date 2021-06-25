@@ -1,18 +1,11 @@
 import JsonContainer  from './JsonContainer';
 import {useState} from 'react';
-import { useAppStore } from '../stores/AppContext';
 import { useObserver } from 'mobx-react';
 import JWTContainer from './JWTContainer';
 import "../style/Tabs.scss"
 
 function Tabs() {
-    /**containerStore.containers.find((container) => container.type === "JWT" != undefined) */
-    const stores = useAppStore()
-    var [isJWT, setIsJWT] = useState(true); 
-    var [JWTID, setJWTID] = useState(null);
-    var [jsonID, setJsonID] = useState(null);
-    var [jsonText, setJsonText] = useState("")
-    var [jwtText, setJwtText] = useState("")
+    const [isJWT, setIsJWT] = useState(true); 
 
     return useObserver ( () => (
       <div class = "fill">

@@ -7,7 +7,6 @@ import App from './JS/App';
 import { AppProvider } from './stores/AppContext';
 import './style/index.scss';
 
-
 ReactDOM.render(
   <AppProvider>
     <App />

@@ -1,5 +1,5 @@
 import React from "react"
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 import { Prism as SyntaxHighlighter} from 'react-syntax-highlighter';
 import { useAppStore } from "../stores/AppContext";
 import { useObserver } from 'mobx-react';
@@ -7,20 +7,26 @@ import CryptoJS from "crypto-js";
 import "../style/Input.scss"
 import { dark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
-
-
 function JWTContainer(props){
-    var [prettyText, setPrettyText] = useState("");
-    var [isChecked, setIsChecked] = useState(false)
-    var [isValidSecret, setIsValidSecret] = useState(false)
+    const [isChecked, setIsChecked] = useState(false)
+    const [isValidSecret, setIsValidSecret] = useState(false)
 
     const stores = useAppStore()
+    useEffect(() => {
+        if(isChecked === true){
+            //if checked, attempt to validate the signature 
+            checkSig();
+        }
+        else{
+            //if the checkbox is not checked, do not attempt to validate the secret
+            setIsValidSecret(false);
+        }
+    }, [isChecked]);
+
 
     return useObserver ( () => (
         <div class = "container w-75">
             <div class = "row" >
-
-                {/*<JsonContainer title = "Ugly JSON" text = {uglyText} onChange = {(event) => setUglyText(event.target.value)}/>*/}
                 <div class = "col-xl-6">
                     <label class = 'inputHeader' onClick = {props.onClick}>{props.title}</label>
                     <br></br>
@@ -36,26 +42,13 @@ function JWTContainer(props){
                         <input
                             name = "verify signature"
                             type = "checkbox"
-                            onChange = {() => {
-                                if(isChecked === false){
-                                    setIsChecked(true)
-                                    console.log(isChecked)
-                                    stores.jwt.prettyJWT = beautify(stores.jwt.JWT);
-                                }
-
-                                if(isChecked === true){
-                                    setIsChecked(false)
-                                    setIsValidSecret(false)
-                                    console.log('not valid')
-                                }
-                                
-                                }}
+                            onChange = {() => {checkboxChange();}}
                             checked = {isChecked}
                         ></input>
                     </label>
 
                     <textarea class = "sigInput" value = {stores.jwt.secret} onChange = {(event) => 
-                        {stores.jwt.secret = event.target.value; setIsValidSecret(false); stores.jwt.prettyJWT = beautify(stores.jwt.JWT);}}/>
+                        {stores.jwt.secret = event.target.value; setIsValidSecret(false); checkSig();}}/>
                     {
                         isChecked ? 
 
@@ -65,15 +58,17 @@ function JWTContainer(props){
                 </div >
 
                 <div class = "col-xl-6">
-                    {/** set lines to break and overwrite component's styling for sizing and add border color based on if the error condition is met */}
                     <label class = "inputHeader">Pretty JWT</label>
+                    {/** set lines to break and overwrite component's styling for sizing and add border color based on if the error condition is met */}
                     <SyntaxHighlighter customStyle = {styles.syntax_highlighter_style}
                     lineProps={{style: { wordBreak: 'break-all', whiteSpace: 'pre-wrap'}}}wrapLines={true} language = "json"  style = {dark}>{stores.jwt.prettyJWT} </SyntaxHighlighter>
                     {
+                        //TODO: fix this hard to read nested ternary statements
                         isValidSecret ? 
-                        <p class = "validSecretText">Your Token is Valid</p>
-                        : null
-
+                            isChecked ?
+                                <p class = "validSecretText">Your Token is Valid</p> : null
+                            :isChecked?
+                                 <p class = "invalidSecretText">Your Token is not Valid</p> : null
                     } 
                 </div>
 
@@ -82,32 +77,16 @@ function JWTContainer(props){
     ));
     function beautify(text){
         let pretty_text = ""
-    
         try{
-
             let base64_jwt = text.split('.',3)
             let header = atob(base64_jwt[0])
             let payload = atob(base64_jwt[1])
             let signature = base64_jwt[2]
-            if(stores.jwt.secret !== ""  && isChecked === true){
-                let signature_hmac = CryptoJS.HmacSHA256(base64_jwt[0] +"." + base64_jwt[1], stores.jwt.secret).toString(CryptoJS.enc.Base64)
-                signature_hmac = base64urlEscape(signature_hmac)
-                if(signature === signature_hmac){
-                    setIsValidSecret(true)
-                    console.log(isChecked)
-                }
-                else{
-                    console.log("they don't match")
-                    setIsValidSecret(false)
-
-                }
-                
-            }
-
+            //format the JWT into JSON so it can be beautified in a JSON format for consistency 
             pretty_text = ("{\n\"header\":"+ header + ",\n\"payload\":"+ payload + ",\n\"signature\": \""+signature+ "\"\n}")
             pretty_text = JSON.parse(pretty_text)
             pretty_text = JSON.stringify(pretty_text, null, '\t')
-            
+            checkSig()
         }
         catch(JWTError){
             pretty_text = "invalid " + JWTError.message
@@ -119,11 +98,35 @@ function JWTContainer(props){
             return pretty_text
         }
     }
+    function checkSig(){
+        //if the secret is not empty and the "Validate Secret" checkbox IS checked attempt to validate the signature
+        if(stores.jwt.secret !== ""  && isChecked === true){
+            let base64_jwt = stores.jwt.JWT.split('.',3)
+            let signature = base64_jwt[2]
+            let signature_hmac = CryptoJS.HmacSHA256(base64_jwt[0] +"." + base64_jwt[1], stores.jwt.secret).toString(CryptoJS.enc.Base64)
+            signature_hmac = base64urlEscape(signature_hmac)
+
+            if(signature === signature_hmac){
+                setIsValidSecret(true)
+                console.log(isChecked)
+            }
+            else{
+                console.log("they don't match")
+                setIsValidSecret(false)
+            }
+        }
+    }
+    
+    function checkboxChange(){
+        //on checkbox change/click swap the value to the inverse of it's current state
+        setIsChecked(!isChecked)  
+    }
     function base64urlEscape(str) {
         // React throws a fit unless this is explicitly put in a RegExp constructor
         //const plusReg = new RegExp('/+/', 'g');
         return str.replace("+", '-').replace(/\//g, '_').replace(/=/g, '');
       };
+
 
 }export default JWTContainer
 
