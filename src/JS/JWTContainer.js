@@ -28,8 +28,12 @@ function JWTContainer(props){
         <div class = "container w-75">
             <div class = "row" >
                 <div class = "col-xl-6">
-                    <label class = 'inputHeader' onClick = {props.onClick}>{props.title}</label>
-                    <br></br>
+                    <div class = "dropdown">
+                        <button class = "dropbtn">JWT ↓</button>
+                        <div class = "dropdown-content">
+                            <a onClick = {props.onClick}>JSON</a>
+                        </div>
+                    </div>
                     <textarea class = "uglyInput" spellCheck = "false" type = "text" value = {stores.jwt.JWT} 
                         onChange ={(e) => {
                             setIsValidSecret(false)

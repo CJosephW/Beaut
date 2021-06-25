@@ -62,3 +62,31 @@ $green : rgb(189, 224, 82);
 .invalidSecretText{
     color:red
 }
+.dropbtn {
+    background-color: transparent;
+    color:$white;
+    border:none;
+    font-weight: bold;
+    font-size: 18px;
+}
+.dropdown{
+    z-index: 3;
+    text-align: center;
+    display: block;
+    
+    
+}
+.dropdown-content{
+    display: none;
+    background-color: $black;
+    color:$white;
+}
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+  }
+
+.dropdown:hover .dropdown-content {display: block;}
+.dropdown-content a:hover {background-color: $grey; cursor: pointer;}

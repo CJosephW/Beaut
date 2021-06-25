@@ -13,8 +13,12 @@ function JsonContainer(props){
         <div class = "container w-75">
             <div class = "row" >
                 <div class = "col-xl-6">
-                    <label class = 'inputHeader' onClick = {props.onClick}>{props.title}</label>
-                    <br></br>
+                    <div class = "dropdown">
+                        <button class = "dropbtn">JSON ↓</button>
+                        <div class = "dropdown-content">
+                            <a onClick = {props.onClick}>JWT</a>
+                        </div>
+                    </div>
                     <textarea class = "uglyInput" spellCheck = "false" type = "text"  value = {stores.json.JSON} 
                         onChange ={(e) => {
                         e.preventDefault()
@@ -31,7 +35,7 @@ function JsonContainer(props){
             </div>
         </div>
     ));
-    
+
     function beautify(text){
         let pretty_text = ""
         try{
