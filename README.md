@@ -11,6 +11,7 @@ This project was a lot of fun as it solidified my understanding of JWTs and the 
 # Future Plans
 1. Add more simple and quick tools such as base64 encoder/decoder
 2. add more encryption formats as right now the JWT beautifyer only supports HS256 for signature verification
+3. make my own syntax highlighter component(mostly for a good learning experience!)
 
 # Getting Setup
 1. ``` git clone https://github.com/CJosephW/Beaut ```
